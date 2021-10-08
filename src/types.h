@@ -5,6 +5,6 @@
 #include <vector>
 
 typedef std::complex<double> amplitude;
-typedef std::vector<std::complex<double> stateVector;
+typedef std::vector<std::complex<double>> amplitudesVector;
 
 #endif
