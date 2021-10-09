@@ -14,4 +14,4 @@ quantumRegister.o : quantumRegister.cpp
 	$(CC)  $(CFLAGS) $(OTHERFLAGS) quantumRegister.cpp
 
 clean: 
-	rm -f *.o
+	rm -f *.o test
