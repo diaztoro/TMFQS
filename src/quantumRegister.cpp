@@ -1,59 +1,84 @@
-#include "quantumRegister.h"
 #include <iostream>
+#include "quantumRegister.h"
+#include "utils.h"
 
 // Quantum Register class implementation
 //
 //Constructors ###################################
-quantumRegister::quantumRegister(unsigned int numQubits) {
-	this->globalNumQubits = numQubits;
-	this->statesVector.push_back(amplitude(1,0)); 
+QuantumRegister::QuantumRegister(unsigned int numQubits) {
+	int i;
+	this->localNumQubits = numQubits;
+	//this->statesVector(localNumQubits, localNumQubits, 0.0, 0, 0);
+/*
+	for(i=0; i<this->localNumQubits; i++){
+		this->statesVector(i,0) = 0.0; 
+		this->statesVector(i,1) = 0.0; 
+		std::cout << this->statesVector(i,0) << " " << this->statesVector(i,1) << std::endl;
+	}
+*/
+}
+
+int QuantumRegister::getSize(){
+	return this->statesVector.size();
 }
 
 //Get methods ####################################
 //
 //Get the element i-th
-amplitude quantumRegister::getElement(unsigned int element){
-	return this->statesVector[element];
+amplitude QuantumRegister::getElement(unsigned int element){
+	amplitude amp;
+	amp.real = this->statesVector(element,0);
+	amp.imag = this->statesVector(element,1);
+	return amp;
 }
 
 //Get the Magnitud or Modulus of the element i-th
-double quantumRegister::magnitude(int element){
+double QuantumRegister::magnitude(int element){
 	return abs(this->statesVector[element]);
 }
 
 //Get the sum of magnitudes of the statesVector
-double quantumRegister::magnitudSumatory(){
-	int sum=0;
-	for (amplitude n : this->statesVector) {
-		sum += abs(n);
+double QuantumRegister::magnitudSumatory(){
+	int i, sum=0;
+	for(i=0; i<this->localNumQubits; i++){
+		sum += pow(this->statesVector(i,0),2) + pow(this->statesVector(i,1),2);
 	}
 	return sum;
 }
 
 
 //Set methods ####################################
-int quantumRegister::insertElement(amplitude a){
-	this->statesVector.push_back(a);
-}
 
 // Fill the states vector ramdonly
-void quantumRegister::fillStatesVector(){
+void QuantumRegister::fillStatesVector(){
 	int i;
+	std::cout << "Filling " << std::endl;
 	for (i=0; i < this->localNumQubits; i++){
-		
+		statesVector(i,0) = getRandomNumber();
+		statesVector(i,1) = getRandomNumber();
+		std::cout << statesVector(i,0) << " " << statesVector(i,1) << std::endl;
 	}
 }
 
 //Miscelaneous methods ###########################
 //Print states vector
-void quantumRegister::printStates(){
-	std::cout << "v = { ";
-	for (amplitude n : this->statesVector) {
-		std::cout << n << ", ";
+void QuantumRegister::printStatesVector(){
+	int i;
+	for(i=0; i<localNumQubits; i++){
+		std::cout << statesVector(i,0) << " " << statesVector(i,1) << std::endl;
 	}
-	std::cout << "}; \n";
+}
+
+//Compress statesVector
+void QuantumRegister::compress(){
+	compressedStatesVector.set(&statesVector[0]);
+}
+
+//Uncompress statesVector
+void QuantumRegister::uncompress(){
+	compressedStatesVector.get(&statesVector[0]);
 }
 
 //Destructor #####################################
-quantumRegister::~quantumRegister(){
+QuantumRegister::~QuantumRegister(){
 }

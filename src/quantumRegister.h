@@ -8,18 +8,21 @@
 
 using namespace std;
 
-class quantumRegister {
+class QuantumRegister {
 
 	private:
-		amplitudesVector statesVector;
 		double localProbabilitySum;
 
 	public:
+		AmplitudesVector statesVector(0 ,0, 0.0, 0, 0);
+		CompressedAmplitudesVector compressedStatesVector;
 		unsigned int globalNumQubits;
 		unsigned int localNumQubits;
 
 		//Constructors ###################################
-		quantumRegister(unsigned int globalNumQubits);
+		QuantumRegister(unsigned int globalNumQubits);
+
+		int getSize();
 
 		//Get methods ####################################
 		//
@@ -33,24 +36,25 @@ class quantumRegister {
 		//Get the sum of magnitudes of the statesVector
 		double magnitudSumatory();
 
+
 		//Set methods ####################################
 		//
-
-		// Insert an element in states vector
-		int insertElement(amplitude a);
 
 		// Fill the states vector ramdonly
 		void fillStatesVector();
 
 		//Miscelaneous methods ###########################
 		//Print states vector
-		void printStates();
+		void printStatesVector();
 
 		//Compress statesVector
-			
+		void compress();
+
+		//Uncompress statesVector
+		void uncompress();
 
 		//Destructor #####################################
-		~quantumRegister();
+		~QuantumRegister();
 };
 
 #endif
