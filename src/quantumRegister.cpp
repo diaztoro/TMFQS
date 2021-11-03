@@ -8,14 +8,22 @@
 QuantumRegister::QuantumRegister(unsigned int numQubits) {
 	int i;
 	this->localNumQubits = numQubits;
-	//this->statesVector(localNumQubits, localNumQubits, 0.0, 0, 0);
-/*
-	for(i=0; i<this->localNumQubits; i++){
-		this->statesVector(i,0) = 0.0; 
-		this->statesVector(i,1) = 0.0; 
-		std::cout << this->statesVector(i,0) << " " << this->statesVector(i,1) << std::endl;
+	this->statesVector.push_back(1.0);
+	for(i=1; i<this->localNumQubits*2; i++){
+		this->statesVector.push_back(0.0);
 	}
-*/
+}
+
+//Constructor by copy
+QuantumRegister::QuantumRegister(const QuantumRegister& qreg) {
+	int i;
+	localNumQubits = qreg.localNumQubits;
+	//statesVector = qreg.statesVector;
+	this->statesVector.push_back(1.0);
+	for(i=1; i<this->localNumQubits*2; i++){
+		this->statesVector.push_back(0.0);
+	}
+	compressedStatesVector = qreg.compressedStatesVector;
 }
 
 int QuantumRegister::getSize(){
@@ -27,8 +35,8 @@ int QuantumRegister::getSize(){
 //Get the element i-th
 amplitude QuantumRegister::getElement(unsigned int element){
 	amplitude amp;
-	amp.real = this->statesVector(element,0);
-	amp.imag = this->statesVector(element,1);
+	amp.real = this->statesVector[element];
+	amp.imag = this->statesVector[element*2];
 	return amp;
 }
 
@@ -41,7 +49,7 @@ double QuantumRegister::magnitude(int element){
 double QuantumRegister::magnitudSumatory(){
 	int i, sum=0;
 	for(i=0; i<this->localNumQubits; i++){
-		sum += pow(this->statesVector(i,0),2) + pow(this->statesVector(i,1),2);
+		sum += pow(this->statesVector[i],2) + pow(this->statesVector[i*2],2);
 	}
 	return sum;
 }
@@ -52,11 +60,8 @@ double QuantumRegister::magnitudSumatory(){
 // Fill the states vector ramdonly
 void QuantumRegister::fillStatesVector(){
 	int i;
-	std::cout << "Filling " << std::endl;
-	for (i=0; i < this->localNumQubits; i++){
-		statesVector(i,0) = getRandomNumber();
-		statesVector(i,1) = getRandomNumber();
-		std::cout << statesVector(i,0) << " " << statesVector(i,1) << std::endl;
+	for (i=0; i < this->localNumQubits*2; i++){
+		statesVector[i] = getRandomNumber();
 	}
 }
 
@@ -65,7 +70,7 @@ void QuantumRegister::fillStatesVector(){
 void QuantumRegister::printStatesVector(){
 	int i;
 	for(i=0; i<localNumQubits; i++){
-		std::cout << statesVector(i,0) << " " << statesVector(i,1) << std::endl;
+		std::cout << statesVector[i] << " " << statesVector[i*2] << std::endl;
 	}
 }
 

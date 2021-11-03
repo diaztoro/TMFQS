@@ -14,13 +14,14 @@ class QuantumRegister {
 		double localProbabilitySum;
 
 	public:
-		AmplitudesVector statesVector(0 ,0, 0.0, 0, 0);
+		amplitudeVector statesVector;
 		CompressedAmplitudesVector compressedStatesVector;
 		unsigned int globalNumQubits;
 		unsigned int localNumQubits;
 
 		//Constructors ###################################
 		QuantumRegister(unsigned int globalNumQubits);
+		QuantumRegister(const QuantumRegister&);
 
 		int getSize();
 
