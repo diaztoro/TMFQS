@@ -15,12 +15,17 @@
  *
  */
 #include <iostream>
+#include <complex>
 #include <stdlib.h>
 #include <unistd.h>
 #include <zfp.h>
 #include <zfparray2.h>
+#include <zfparray1.h>
 #include "array2d.h"
 
+typedef struct {
+   double real, imag;
+} amplitude;
 
 using namespace std;
 
@@ -28,6 +33,16 @@ void print2(zfp::array2<double>::pointer p, size_t n)
 { 
 	while (n--) 
 		std::cout << *p++ << std::endl;
+}
+
+void printArray2d(raw::array2d r, int size){
+	int i, j;
+	for(i=0; i < size; i++){
+		for(j=0; j < 2; j++){
+			cout << r(i,j) << " ";
+		}
+		cout << endl;
+	}
 }
 
 int main(int argc, char *argv[]){
@@ -38,6 +53,7 @@ int main(int argc, char *argv[]){
 		cout << "0: std::vector" << endl;
 		cout << "1: raw::array2d" << endl;
 		cout << "2: zfp::array2" << endl;
+		cout << "3: zfp::array" << endl;
 		return 1;
 	}
    else{
@@ -56,7 +72,16 @@ int main(int argc, char *argv[]){
 			}
 			case '1' : {
 				cout << "raw::array2d" << endl;
-				raw::array2d r(pow(2,numberOfQubits), 2);
+				//raw::array2d r(pow(2,numberOfQubits), 2);
+				raw::array2d r;
+				r.resize(pow(2,numberOfQubits), 2);
+				printArray2d(r, numberOfQubits);
+				for(i=0; i < numberOfQubits; i++){
+					for(j=0; j < 2; j++){
+						r(i,j) = 3.0;
+					}
+				}
+				printArray2d(r, numberOfQubits);
 				sleep(30);
 				break;
 			}

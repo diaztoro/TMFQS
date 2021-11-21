@@ -12,15 +12,14 @@ class QuantumRegister {
 
 	private:
 		double localProbabilitySum;
+		AmplitudeVector statesVector;
 
 	public:
-		amplitudeVector statesVector;
-		CompressedAmplitudesVector compressedStatesVector;
 		unsigned int globalNumQubits;
 		unsigned int localNumQubits;
 
 		//Constructors ###################################
-		QuantumRegister(unsigned int globalNumQubits);
+		QuantumRegister();
 		QuantumRegister(const QuantumRegister&);
 
 		int getSize();
@@ -40,6 +39,7 @@ class QuantumRegister {
 
 		//Set methods ####################################
 		//
+		void setSize(unsigned int);
 
 		// Fill the states vector ramdonly
 		void fillStatesVector();
@@ -47,12 +47,6 @@ class QuantumRegister {
 		//Miscelaneous methods ###########################
 		//Print states vector
 		void printStatesVector();
-
-		//Compress statesVector
-		void compress();
-
-		//Uncompress statesVector
-		void uncompress();
 
 		//Destructor #####################################
 		~QuantumRegister();

@@ -5,14 +5,17 @@
 #include <zfp.h>
 #include <zfparray2.h>
 #include <zfpcarray2.h>
-#include <vector>
+#include "array2d.h"
 
 typedef struct {
 	double real, imag;
 } amplitude;
 
-typedef std::vector<double> amplitudeVector;
-typedef zfp::array2d CompressedAmplitudesVector;
+using AmplitudeVector = raw::array2d;
+using Matrix = raw::array2d;
+
+using CompressedAmplitudesVector = zfp::array2d;
+using CompressedMatrix = zfp::array2d;
 
 
 #endif
