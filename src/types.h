@@ -3,8 +3,7 @@
 
 
 #include <zfp.h>
-#include <zfparray2.h>
-#include <zfpcarray2.h>
+#include <zfp/array2.hpp>
 #include "array2d.h"
 
 typedef struct {
