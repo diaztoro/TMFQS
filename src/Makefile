@@ -1,5 +1,6 @@
 #CC  =   icpc
-CC  =   mpiicpc
+#CC  =   mpiicpc
+CC  =   icx
 DEBUG_FLAG  = -g 
 #DEBUG_FLAG  = 
 CXXFLAGS  = -c
