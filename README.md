@@ -1,2 +1,0 @@
-# TMFQS
-Quantum Simulator
