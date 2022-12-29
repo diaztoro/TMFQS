@@ -1,19 +1,21 @@
 #include "quantumRegister.h"
-#include <iostream>
 #include <stdlib.h>
 #include <mpi.h>
 #include <zfp.h>
-#include <zfparray2.h>
+#include <zfp/array2.hpp>
 #include "array2d.h"
+#include <iostream>
 
 
 using namespace std;
 
+/*
 void print2(zfp::array2<double>::pointer p, size_t n)
 { 
 	while (n--) 
-		std::cout << *p++ << std::endl;
+		cout << *p++ << endl;
 }
+*/
 
 int main(int argc, char *argv[]){
 	int numberOfQubits;

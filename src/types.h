@@ -8,6 +8,9 @@
 #include <map>
 #include <string>
 
+typedef struct {
+        double real, imag;
+} amplitude;
 
 using AmplitudeVector = raw::array2d;
 using CompressedAmplitudesVector = zfp::array2d;

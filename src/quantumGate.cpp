@@ -1,10 +1,12 @@
 #include "quantumGate.h"
 
+/*
 QuantumGate::QuantumGate(unsigned int dimension){
 	this->dimension = dimension;
 	this->gate.real.resize(this->dimension, this->dimension);
 	this->gate.imag.resize(this->dimension, this->dimension);
 }
+*/
 
 
 
