@@ -10,11 +10,11 @@
 
 typedef struct {
         double real, imag;
-} amplitude;
+} Amplitude;
 
-using AmplitudeVector = raw::array2d;
 using CompressedAmplitudesVector = zfp::array2d;
-typedef std::map<std::string, AmplitudeVector> state_map;
+using AmplitudesVector = raw::array2d;
+typedef std::vector<int> StatesVector;
 
 
 #endif
