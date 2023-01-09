@@ -31,14 +31,14 @@ class QuantumRegister {
 		Amplitude getElement(unsigned int);
 
 		//Get the Magnitud or Modulus of the element i-th
-		double magnitude(int element);
+		double probability(unsigned int state);
 
 		//Get the sum of magnitudes of the statesVector
 		double magnitudSumatory();
 
 
 		//Get the amplitude of specific state
-		Amplitude amplitude(int state);
+		Amplitude amplitude(unsigned int state);
 
 		static StatesVector allStates();
 

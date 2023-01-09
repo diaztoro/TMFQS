@@ -9,6 +9,9 @@ QuantumRegister::QuantumRegister() {
 
 QuantumRegister::QuantumRegister(unsigned int n) {
 	this->numQubits = n;
+	amplitudes.resize(1, 2);
+	amplitudes(0,0) = 1.0;
+	amplitudes(0,1) = 0.0;
 }
 
 //Constructor by copy
@@ -37,21 +40,8 @@ Amplitude QuantumRegister::getElement(unsigned int element){
 	return amp;
 }
 
-//Get the Magnitud or Modulus of the element i-th
-double QuantumRegister::magnitude(int element){
-	return sqrt(pow(this->amplitudes(element,0), 2) + pow(this->amplitudes(element,1), 2));
-}
 
-//Get the sum of magnitudes of the amplitudes
-double QuantumRegister::magnitudSumatory(){
-	int i, sum=0;
-	for(i=0; i<this->numQubits; i++){
-		sum += pow(this->amplitudes(i,0),2) + pow(this->amplitudes(i,1),2);
-	}
-	return sum;
-}
-
-Amplitude QuantumRegister::amplitude(int state){
+Amplitude QuantumRegister::amplitude(unsigned int state){
 	Amplitude amp;
 	int index;
 	StatesVector::iterator i = find(this->states.begin(), this->states.end(), state);
@@ -65,6 +55,22 @@ Amplitude QuantumRegister::amplitude(int state){
 		amp.imag = -1.0;
    }
 	return amp;
+}
+
+
+//Get the Magnitud or Modulus of the element i-th
+double QuantumRegister::probability(unsigned int state){
+	Amplitude amp = amplitude(state);
+	return sqrt(pow(amp.real, 2) + pow(amp.imag, 2));
+}
+
+//Get the sum of magnitudes of the amplitudes
+double QuantumRegister::magnitudSumatory(){
+	int i, sum=0;
+	for(i=0; i<this->numQubits; i++){
+		sum += pow(this->amplitudes(i,0),2) + pow(this->amplitudes(i,1),2);
+	}
+	return sum;
 }
 
 

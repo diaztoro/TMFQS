@@ -10,16 +10,14 @@
 using namespace std;
 
 int main(int argc, char *argv[]){
-	int numberOfQubits;
-	int pool_rank;
-	int pool_size;
 
 	if(argc != 3){
 		cout << "testSim <Number of Qubits> <index>" << endl;
 		return 1;
 	}
    else{
-		int i, j, index;
+		int i, j;
+		unsigned int numberOfQubits, index;
 		numberOfQubits = atoi(argv[1]);
 		index = atoi(argv[2]);
 		Amplitude amp1;
