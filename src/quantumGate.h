@@ -6,7 +6,7 @@
 class QuantumGate {
 
 	private:
-		matrixcd gate;
+		//matrixcd gate;
 		//Matrix realMatrix;
 		//Matrix imagMatrix;
 

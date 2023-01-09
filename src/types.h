@@ -5,20 +5,16 @@
 #include <zfp.h>
 #include <zfp/array2.hpp>
 #include "array2d.h"
+#include <map>
+#include <string>
 
 typedef struct {
-	double real, imag;
-} amplitude;
-
-typedef struct {
-	raw::array2d real, imag;
-} matrixcd;
-
-using AmplitudeVector = raw::array2d;
-//using Matrix = raw::array2d;
+        double real, imag;
+} Amplitude;
 
 using CompressedAmplitudesVector = zfp::array2d;
-using CompressedMatrix = zfp::array2d;
+using AmplitudesVector = raw::array2d;
+typedef std::vector<int> StatesVector;
 
 
 #endif

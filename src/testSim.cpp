@@ -1,52 +1,44 @@
 #include "quantumRegister.h"
-#include <iostream>
 #include <stdlib.h>
 #include <mpi.h>
 #include <zfp.h>
-#include <zfparray2.h>
+#include <zfp/array2.hpp>
 #include "array2d.h"
+#include <iostream>
 
 
 using namespace std;
 
-void print2(zfp::array2<double>::pointer p, size_t n)
-{ 
-	while (n--) 
-		std::cout << *p++ << std::endl;
-}
-
 int main(int argc, char *argv[]){
-	int numberOfQubits;
-	int pool_rank;
-	int pool_size;
 
-	if(argc != 2){
-		cout << "testSim <Number of Qubits>" << endl;
+	if(argc != 3){
+		cout << "testSim <Number of Qubits> <index>" << endl;
 		return 1;
 	}
    else{
 		int i, j;
+		unsigned int numberOfQubits, index;
 		numberOfQubits = atoi(argv[1]);
+		index = atoi(argv[2]);
+		Amplitude amp1;
 
-		QuantumRegister qreg1;
-		qreg1.setSize(numberOfQubits);
+		//QuantumRegister qreg1;
+		//qreg1.setSize(numberOfQubits);
+		QuantumRegister qreg1(numberOfQubits);
 		qreg1.fillStatesVector();
-		cout << qreg1.getSize() << endl;
+		//cout << qreg1.getSize() << endl;
 		qreg1.printStatesVector();
+		amp1 = qreg1.amplitude(index);
+		cout << amp1.real << amp1.imag << endl;
 
+		/*
 		cout << "Instantiating by copy" << endl;
 		QuantumRegister qreg2(qreg1);
 		cout << qreg2.getSize() << endl;
 		cout << "Printing qreg2" << endl;
 		qreg2.printStatesVector();
+		*/
 
-/*
-		MPI_Init(&argc, &argv);
-		MPI_Comm_size(MPI_COMM_WORLD, &pool_size);
-		MPI_Comm_rank(MPI_COMM_WORLD, &pool_rank);
-		
-		MPI_Finalize();
-*/
 
 		return 0;
 	}

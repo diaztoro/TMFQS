@@ -1,4 +1,3 @@
-#include <iostream>
 #include "quantumRegister.h"
 #include "utils.h"
 
@@ -8,42 +7,68 @@
 QuantumRegister::QuantumRegister() {
 }
 
+QuantumRegister::QuantumRegister(unsigned int n) {
+	this->numQubits = n;
+	amplitudes.resize(1, 2);
+	amplitudes(0,0) = 1.0;
+	amplitudes(0,1) = 0.0;
+}
+
 //Constructor by copy
 QuantumRegister::QuantumRegister(const QuantumRegister& qreg) {
 	int i, j;
-	localNumQubits = qreg.localNumQubits;
-	statesVector.resize(pow(2,this->localNumQubits), 2);
-	for(i=0; i < localNumQubits; i++){
+	numQubits = qreg.numQubits;
+	amplitudes.resize(pow(2,this->numQubits), 2);
+	for(i=0; i < numQubits; i++){
 		for(j=0; j < 2; j++){
-			statesVector(i,j) = qreg.statesVector(i,j);
+			amplitudes(i,j) = qreg.amplitudes(i,j);
 		}
 	}
 }
 
 int QuantumRegister::getSize(){
-	return this->statesVector.size();
+	return this->amplitudes.size();
 }
 
 //Get methods ####################################
 //
 //Get the element i-th
-amplitude QuantumRegister::getElement(unsigned int element){
-	amplitude amp;
-	amp.real = this->statesVector(element,0);
-	amp.imag = this->statesVector(element,1);
+Amplitude QuantumRegister::getElement(unsigned int element){
+	Amplitude amp;
+	amp.real = this->amplitudes(element,0);
+	amp.imag = this->amplitudes(element,1);
 	return amp;
 }
 
-//Get the Magnitud or Modulus of the element i-th
-double QuantumRegister::magnitude(int element){
-	return sqrt(pow(this->statesVector(element,0), 2) + pow(this->statesVector(element,1), 2));
+
+Amplitude QuantumRegister::amplitude(unsigned int state){
+	Amplitude amp;
+	int index;
+	StatesVector::iterator i = find(this->states.begin(), this->states.end(), state);
+	if (i != this->states.end()) {
+		index = i - this->states.begin();
+		amp.real = this->amplitudes(index,0);
+		amp.imag = this->amplitudes(index,1);
+	}
+	else {
+		amp.real = -1.0;
+		amp.imag = -1.0;
+   }
+	return amp;
 }
 
-//Get the sum of magnitudes of the statesVector
+
+//Get the Magnitud or Modulus of the element i-th
+double QuantumRegister::probability(unsigned int state){
+	Amplitude amp = amplitude(state);
+	return sqrt(pow(amp.real, 2) + pow(amp.imag, 2));
+}
+
+//Get the sum of magnitudes of the amplitudes
 double QuantumRegister::magnitudSumatory(){
 	int i, sum=0;
-	for(i=0; i<this->localNumQubits; i++){
-		sum += pow(this->statesVector(i,0),2) + pow(this->statesVector(i,1),2);
+	for(i=0; i<this->numQubits; i++){
+		sum += pow(this->amplitudes(i,0),2) + pow(this->amplitudes(i,1),2);
 	}
 	return sum;
 }
@@ -51,17 +76,22 @@ double QuantumRegister::magnitudSumatory(){
 
 //Set methods ####################################
 void QuantumRegister::setSize(unsigned int numQubits){
-	this->localNumQubits = numQubits;
-	this->statesVector.resize(pow(2,this->localNumQubits), 2);
+	this->numQubits = numQubits;
+	this->amplitudes.resize(this->numQubits, 2);
+	this->states.resize(this->numQubits);
 }
 
 
 // Fill the states vector ramdonly
 void QuantumRegister::fillStatesVector(){
 	int i, j;
-	for (i=0; i < this->localNumQubits; i++){
+	if ( this->states.size() < this->numQubits ){
+		this->amplitudes.resize(this->numQubits, 2);
+	}
+	for (i=0; i < this->numQubits; i++){
+		this->states.push_back(i);
 		for (j=0; j < 2; j++){
-			statesVector(i,j) = getRandomNumber();
+			this->amplitudes(i,j) = getRandomNumber();
 		}
 	}
 }
@@ -70,9 +100,10 @@ void QuantumRegister::fillStatesVector(){
 //Print states vector
 void QuantumRegister::printStatesVector(){
 	int i, j;
-	for(i=0; i < this->localNumQubits; i++){
+	for(i=0; i < this->numQubits; i++){
+		cout << this->states[i] << ": ";
 		for(j=0; j < 2; j++){
-			cout << this->statesVector(i,j) << " ";
+			cout << this->amplitudes(i,j) << " ";
 		}
 		cout << endl;
 	}
