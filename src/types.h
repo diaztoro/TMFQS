@@ -15,6 +15,7 @@ typedef struct {
 using CompressedAmplitudesVector = zfp::array2d;
 using AmplitudesVector = raw::array2d;
 typedef std::vector<int> StatesVector;
+typedef std::vector<int> IntegerVector;
 
 
 #endif

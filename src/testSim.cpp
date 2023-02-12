@@ -1,4 +1,5 @@
 #include "quantumRegister.h"
+#include "quantumGate.h"
 #include <stdlib.h>
 #include <mpi.h>
 #include <zfp.h>
@@ -21,6 +22,11 @@ int main(int argc, char *argv[]){
 		numberOfQubits = atoi(argv[1]);
 		index = atoi(argv[2]);
 		Amplitude amp1;
+		QuantumGate g(4), g2(4), h1(2), h2(2);
+		g2 = g.Identity(4);
+		g2.printQuantumGate();
+		h2 = h1.Hadamard();
+		h2.printQuantumGate();
 
 		//QuantumRegister qreg1;
 		//qreg1.setSize(numberOfQubits);

@@ -98,18 +98,124 @@ void QuantumRegister::fillStatesVector(){
 
 //Miscelaneous methods ###########################
 //Print states vector
-void QuantumRegister::printStatesVector(){
+std::ostream &operator << (std::ostream &os, QuantumRegister &reg) {
 	int i, j;
-	for(i=0; i < this->numQubits; i++){
-		cout << this->states[i] << ": ";
+	for(i=0; i < reg.numQubits; i++){
+		cout << reg.states[i] << ": ";
 		for(j=0; j < 2; j++){
-			cout << this->amplitudes(i,j) << " ";
+			cout << reg.amplitudes(i,j) << " ";
 		}
 		cout << endl;
 	}
+	return os;
+}
+
+void QuantumRegister::printStatesVector(){
+	cout << *this;
 }
 
 
 //Destructor #####################################
 QuantumRegister::~QuantumRegister(){
+}
+
+
+
+//Quantum Gates operations
+//
+// Method to copy amplitudes vector
+AmplitudesVector copyAmplitudes(AmplitudesVector amps){
+	AmplitudesVector amps2;
+	int i, j;
+
+	amps2.resize(amps.size(), 2);
+	for(i=0; i < amps.size(); i++){
+		for(j=0; j < 2; j++){
+			amps2(i,j) = amps(i,j);
+		}
+	}
+	return amps2;
+}
+
+//Get all states accoding the number of qubits
+StatesVector getAllStates(unsigned int qubits){
+	StatesVector v;
+	int i;
+
+	for(i=0; i < qubits; i++){
+		v[i] = i;
+	}
+	return v;
+}
+
+string QuantumRegister::getNthBit(unsigned int state, unsigned int qubit){
+	unsigned int pos, bit;
+	pos = this->numQubits - qubit - 1;   
+	bit = (state >> pos) & 1;
+	return to_string(bit);
+}
+
+// Method to apply a quantum gate to quantum register
+void QuantumRegister::applyGate(QuantumGate g, IntegerVector qubits){
+
+	if (g.dimension != (unsigned int)(1 << qubits.size())) { // 1 << qubits.size is pow(2, qubits.size())
+		printf("Unitary matrix dimension is not correct to be applied to the inputs qubits\n");
+		return; 
+	}
+
+	unsigned int state, i; 
+	string s;
+	unsigned int r, j; 
+	StatesVector oldStates, tempStates;
+	AmplitudesVector oldAmplitudes;
+	Amplitude c;
+	
+
+	oldAmplitudes = copyAmplitudes(amplitudes);
+	oldStates = states;
+	tempStates = getAllStates(qubits.size());
+
+	//for (state_map::iterator i = old.begin(); i != old.end(); ++i) {
+	for( i = 0; i < oldStates.size(); i++ ){
+		state = oldStates[i];
+
+		for (unsigned int qubit : qubits){
+			s += getNthBit(state, qubit);
+		}
+
+	/*
+		state = i->first; 
+		s = "";
+		for (unsigned int q : qubits) s += state[q];
+		r = binary_to_base10(s); // Find which number basis element s corresponds to.
+	*/
+
+	/*
+
+		states[state] -= (1.0 - u[r][r]) * old[state];
+		// if (states[state] == 0.0) states.erase(state); // Get rid of it.
+		if (probability(state) < 1e-16) states.erase(state); // zero beyond machine precision.
+
+		j = 0;
+		for(string k : temp_states) {
+			if (j != r) {
+				s = state;
+				for (unsigned int l = 0; l < k.size(); l++) s[qubits[l]] = k[l];
+				c = u[j][r] * old[state];
+				if (check_state(s)) {
+					states[s] += c;
+					// if (states[s] == 0.0) states.erase(s);
+					if (probability(s) < 1e-16) states.erase(s); // zero beyond machine precision.
+				} else if(c != 0.0) states[s] = c;
+			}
+			j++;
+		}
+	*/
+	}
+}
+
+
+
+// Method to apply a Hadamard gate to specific qubit of a quantum register
+void QuantumRegister::hadamar(unsigned int qubit){
 }
