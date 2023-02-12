@@ -5,10 +5,10 @@ DEBUG_FLAG  = -g
 #DEBUG_FLAG  = 
 CXXFLAGS  = -c
 INCS  = -I /usr/local/zfp/include
-LIBS = -L /usr/local/zfp/lib64 -lzfp
+LIBS = -L /usr/local/zfp/lib64 -lzfp -lstdc++
 
 testSim: testSim.o quantumRegister.o quantumGate.o utils.o
-	$(CC) $(INCS) $(LIBS) $(DEBUG_FLAG) testSim.o quantumRegister.o quantumGate.o utils.o -o execTest
+	$(CC) $(INCS) $(LIBS) $(DEBUG_FLAG) testSim.o quantumRegister.o quantumGate.o utils.o -o testSim
 
 testSim.o: testSim.cpp
 	$(CC) $(INCS) $(CXXFLAGS) $(DEBUG_FLAG) testSim.cpp

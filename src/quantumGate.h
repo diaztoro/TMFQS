@@ -1,24 +1,27 @@
 #ifndef QUANTUM_GATE_INCLUDE
 #define QUANTUM_GATE_INCLUDE
 
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
 #include "types.h"
+#include "utils.h"
+
+using namespace std;
 
 class QuantumGate {
 
 	private:
-		matrixcd gate;
-		//Matrix realMatrix;
-		//Matrix imagMatrix;
+		Amplitude **matrix;
 
 	public:
 		unsigned int dimension;
 		QuantumGate(unsigned int dimension);
-/*
-		amp * operator[](unsigned int i);
-		QuantumGate operator*(amp x);
-		QuantumGate operator*(QuantumGate &U);
-		void print_matrix();
-		friend std::ostream &operator<<(std::ostream &os, QuantumGate &U);
+		Amplitude * operator[](unsigned int i);
+		QuantumGate operator*(Amplitude x);
+		QuantumGate operator*(QuantumGate &qg);
+		void printQuantumGate();
+		friend std::ostream &operator<<(std::ostream &os, QuantumGate &qg);
 
 		static QuantumGate Identity(unsigned int dimension);
 		static QuantumGate Hadamard();
@@ -37,11 +40,10 @@ class QuantumGate {
 
 		// Matrices to be created upon initialization.
 		// const static QuantumGate MHadamard;
-*/
 
 };
 
 // For left multiplication.
-//QuantumGate operator*(amp x, QuantumGate &U);
+QuantumGate operator*(Amplitude x, QuantumGate &U);
 
 #endif
