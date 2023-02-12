@@ -62,7 +62,7 @@ class QuantumRegister {
 
 		//Quantum Gates operations
 		void applyGate(QuantumGate g, IntegerVector v);
-		void hadamar(unsigned int qubit);
+		void Hadamard(unsigned int qubit);
 };
 
 #endif

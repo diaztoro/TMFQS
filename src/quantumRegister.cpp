@@ -9,9 +9,10 @@ QuantumRegister::QuantumRegister() {
 
 QuantumRegister::QuantumRegister(unsigned int n) {
 	this->numQubits = n;
-	amplitudes.resize(1, 2);
-	amplitudes(0,0) = 1.0;
-	amplitudes(0,1) = 0.0;
+	this->amplitudes.resize(1, 2);
+	this->amplitudes(0,0) = 1.0;
+	this->amplitudes(0,1) = 0.0;
+	this->states.push_back(0);
 }
 
 //Constructor by copy
@@ -100,7 +101,8 @@ void QuantumRegister::fillStatesVector(){
 //Print states vector
 std::ostream &operator << (std::ostream &os, QuantumRegister &reg) {
 	int i, j;
-	for(i=0; i < reg.numQubits; i++){
+	cout << reg.states.size() << endl;
+	for(auto i : reg.states){
 		cout << reg.states[i] << ": ";
 		for(j=0; j < 2; j++){
 			cout << reg.amplitudes(i,j) << " ";
@@ -143,7 +145,7 @@ StatesVector getAllStates(unsigned int qubits){
 	int i;
 
 	for(i=0; i < qubits; i++){
-		v[i] = i;
+		v.push_back(i);
 	}
 	return v;
 }
@@ -170,28 +172,42 @@ void QuantumRegister::applyGate(QuantumGate g, IntegerVector qubits){
 	AmplitudesVector oldAmplitudes;
 	Amplitude c;
 	
-
 	oldAmplitudes = copyAmplitudes(amplitudes);
 	oldStates = states;
 	tempStates = getAllStates(qubits.size());
 
+	cout << "States vector" << endl;
+	for (unsigned int i : states){
+		cout << states[i] << endl;
+	}
+	cout << "Old States vector" << endl;
+	for (unsigned int i : oldStates){
+		cout << oldStates[i] << endl;
+	}
+	cout << "Temp States vector" << endl;
+	for (unsigned int i : tempStates){
+		cout << tempStates[i] << endl;
+	}
+
+
 	//for (state_map::iterator i = old.begin(); i != old.end(); ++i) {
 	for( i = 0; i < oldStates.size(); i++ ){
+		//state = i->first; 
 		state = oldStates[i];
+		s = "";
+		cout << "QuantumRegister::applyGate 6" << endl;
 
+		//for (unsigned int q : qubits) s += state[q];
 		for (unsigned int qubit : qubits){
 			s += getNthBit(state, qubit);
 		}
+		cout << "QuantumRegister::applyGate 7" << endl;
+		//r = binary_to_base10(s); // Find which number basis element s corresponds to.
+		r = binaryToDecimal(s);
+		cout << "QuantumRegister::applyGate 8" << endl;
+
 
 	/*
-		state = i->first; 
-		s = "";
-		for (unsigned int q : qubits) s += state[q];
-		r = binary_to_base10(s); // Find which number basis element s corresponds to.
-	*/
-
-	/*
-
 		states[state] -= (1.0 - u[r][r]) * old[state];
 		// if (states[state] == 0.0) states.erase(state); // Get rid of it.
 		if (probability(state) < 1e-16) states.erase(state); // zero beyond machine precision.
@@ -217,5 +233,9 @@ void QuantumRegister::applyGate(QuantumGate g, IntegerVector qubits){
 
 
 // Method to apply a Hadamard gate to specific qubit of a quantum register
-void QuantumRegister::hadamar(unsigned int qubit){
+void QuantumRegister::Hadamard(unsigned int qubit){
+	IntegerVector v;
+	v.push_back(qubit);
+	cout << "QuantumRegister::Hadamard" << endl;
+	applyGate(QuantumGate::Hadamard(), v);
 }

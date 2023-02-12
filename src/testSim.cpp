@@ -21,29 +21,10 @@ int main(int argc, char *argv[]){
 		unsigned int numberOfQubits, index;
 		numberOfQubits = atoi(argv[1]);
 		index = atoi(argv[2]);
-		Amplitude amp1;
-		QuantumGate g(4), g2(4), h1(2), h2(2);
-		g2 = g.Identity(4);
-		g2.printQuantumGate();
-		h2 = h1.Hadamard();
-		h2.printQuantumGate();
 
-		//QuantumRegister qreg1;
-		//qreg1.setSize(numberOfQubits);
-		QuantumRegister qreg1(numberOfQubits);
-		qreg1.fillStatesVector();
-		//cout << qreg1.getSize() << endl;
-		qreg1.printStatesVector();
-		amp1 = qreg1.amplitude(index);
-		cout << amp1.real << amp1.imag << endl;
-
-		/*
-		cout << "Instantiating by copy" << endl;
-		QuantumRegister qreg2(qreg1);
-		cout << qreg2.getSize() << endl;
-		cout << "Printing qreg2" << endl;
-		qreg2.printStatesVector();
-		*/
+		QuantumRegister qreg(numberOfQubits);
+		qreg.printStatesVector();
+		//qreg.Hadamard(index);
 
 
 		return 0;
