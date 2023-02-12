@@ -7,6 +7,7 @@
 #include <functional>
 #include <algorithm>
 #include "types.h"
+#include "quantumGate.h"
 
 using namespace std;
 
@@ -52,9 +53,16 @@ class QuantumRegister {
 		//Miscelaneous methods ###########################
 		//Print states vector
 		void printStatesVector();
+		friend std::ostream &operator << (std::ostream &os, QuantumRegister &reg);
+		string getNthBit(unsigned int state, unsigned int qubit);
 
 		//Destructor #####################################
 		~QuantumRegister();
+
+
+		//Quantum Gates operations
+		void applyGate(QuantumGate g, IntegerVector v);
+		void Hadamard(unsigned int qubit);
 };
 
 #endif
