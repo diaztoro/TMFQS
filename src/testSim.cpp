@@ -24,7 +24,7 @@ int main(int argc, char *argv[]){
 
 		QuantumRegister qreg(numberOfQubits);
 		qreg.printStatesVector();
-		//qreg.Hadamard(index);
+		qreg.Hadamard(index);
 
 
 		return 0;

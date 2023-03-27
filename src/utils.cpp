@@ -22,17 +22,27 @@ Amplitude amplitudeMult(Amplitude a, Amplitude b){
 	return result;
 }
 
-// Complex number sum
+// Complex number addtion
 Amplitude amplitudeAdd(Amplitude a, Amplitude b){
 	Amplitude result;
-	result.real = a.real * b.real;
-	result.imag = a.imag * b.imag;
+	result.real = a.real + b.real;
+	result.imag = a.imag + b.imag;
+	return result;
+}
+
+// Complex number subtraction
+Amplitude amplitudeSubt(Amplitude a, Amplitude b){
+	Amplitude result;
+	result.real = a.real - b.real;
+	result.imag = a.imag - b.imag;
 	return result;
 }
 
 // Convert char to int
 unsigned int charToInteger(char c){
-	return c + '0';
+	int i;
+	i = int(c) - 48;
+	return i;
 }
 
 
@@ -45,3 +55,9 @@ unsigned int binaryToDecimal(std::string str) {
    return result;
 }
 
+// Copy bits from source to destination
+unsigned int copyBits(int destination, int source, int at, int numbits){
+   // int mask = ((1LL<<numbits)-1)<<at; // 1st aproach
+   int mask = ((~0u)>>(sizeof(int)*8-numbits))<<at; // 2nd aproach
+   return (destination&~mask)|((source<<at)&mask);
+}

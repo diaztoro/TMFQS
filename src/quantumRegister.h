@@ -55,6 +55,7 @@ class QuantumRegister {
 		void printStatesVector();
 		friend std::ostream &operator << (std::ostream &os, QuantumRegister &reg);
 		string getNthBit(unsigned int state, unsigned int qubit);
+		int findState(unsigned int state);
 
 		//Destructor #####################################
 		~QuantumRegister();
