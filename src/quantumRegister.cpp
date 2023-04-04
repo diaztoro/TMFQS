@@ -10,13 +10,13 @@ QuantumRegister::QuantumRegister() {
 QuantumRegister::QuantumRegister(unsigned int n) {
 	this->numQubits = n;
 	this->states.push_back(0);
-	this->amplitudes.resize(1, 2);
-	this->amplitudes(0,0) = 1.0;
-	this->amplitudes(0,1) = 0.0;
+	this->amplitudes.push_back(1.0);
+	this->amplitudes.push_back(0.0);
 }
 
 //Constructor by copy
 QuantumRegister::QuantumRegister(const QuantumRegister& qreg) {
+	/*
 	int i, j;
 	numQubits = qreg.numQubits;
 	amplitudes.resize(pow(2,this->numQubits), 2);
@@ -25,6 +25,8 @@ QuantumRegister::QuantumRegister(const QuantumRegister& qreg) {
 			amplitudes(i,j) = qreg.amplitudes(i,j);
 		}
 	}
+	*/
+	this->amplitudes = qreg.amplitudes;
 }
 
 int QuantumRegister::getSize(){
@@ -33,11 +35,11 @@ int QuantumRegister::getSize(){
 
 //Get methods ####################################
 //
-//Get the element i-th
+//Get the element i-th of linearized amplitudes vector
 Amplitude QuantumRegister::getElement(unsigned int element){
 	Amplitude amp;
-	amp.real = this->amplitudes(element,0);
-	amp.imag = this->amplitudes(element,1);
+	amp.real = this->amplitudes[element*2];
+	amp.imag = this->amplitudes[element*2 + 1];
 	return amp;
 }
 
@@ -48,8 +50,8 @@ Amplitude QuantumRegister::amplitude(unsigned int state){
 	StatesVector::iterator i = find(this->states.begin(), this->states.end(), state);
 	if (i != this->states.end()) {
 		index = i - this->states.begin();
-		amp.real = this->amplitudes(index,0);
-		amp.imag = this->amplitudes(index,1);
+		amp.real = this->amplitudes[index];
+		amp.imag = this->amplitudes[index + 1];
 	}
 	else {
 		amp.real = -1.0;
@@ -69,7 +71,7 @@ double QuantumRegister::probability(unsigned int state){
 double QuantumRegister::magnitudSumatory(){
 	int i, sum=0;
 	for(i=0; i<this->numQubits; i++){
-		sum += pow(this->amplitudes(i,0),2) + pow(this->amplitudes(i,1),2);
+		sum += pow(this->amplitudes[i*2], 2) + pow(this->amplitudes[i*2 + 1], 2);
 	}
 	return sum;
 }
@@ -78,7 +80,7 @@ double QuantumRegister::magnitudSumatory(){
 //Set methods ####################################
 void QuantumRegister::setSize(unsigned int numQubits){
 	this->numQubits = numQubits;
-	this->amplitudes.resize(this->numQubits, 2);
+	this->amplitudes.resize(this->numQubits*2);
 	this->states.resize(this->numQubits);
 }
 
@@ -87,13 +89,12 @@ void QuantumRegister::setSize(unsigned int numQubits){
 void QuantumRegister::fillStatesVector(){
 	int i, j;
 	if ( this->states.size() < this->numQubits ){
-		this->amplitudes.resize(this->numQubits, 2);
+		this->amplitudes.resize(this->numQubits*2);
 	}
 	for (i=1; i < this->numQubits; i++){
 		this->states.push_back(i);
-		for (j=0; j < 2; j++){
-			this->amplitudes(i,j) = getRandomNumber();
-		}
+		this->amplitudes.push_back(i);
+		this->amplitudes.push_back(i);
 	}
 }
 
@@ -103,12 +104,14 @@ std::ostream &operator << (std::ostream &os, QuantumRegister &reg) {
 	int i = 0, j;
 	for(auto &element : reg.states){
 		cout << element << ": ";
-		for(j=0; j < 2; j++){
-			cout << reg.amplitudes(i,j) << " ";
-		}
-		cout << endl;
+		cout << reg.amplitudes[i*2] << " " << reg.amplitudes[i*2 + 1] << endl;
 		i++;
 	}
+	/*
+	for(auto &amp : reg.amplitudes){
+		cout << amp << endl;
+	}
+	*/
 	return os;
 }
 
@@ -128,6 +131,8 @@ QuantumRegister::~QuantumRegister(){
 // Method to copy amplitudes vector
 AmplitudesVector copyAmplitudes(AmplitudesVector amps){
 	AmplitudesVector amps2;
+	amps2 = amps;
+	/*
 	int i, j;
 
 	amps2.resize(amps.size(), 2);
@@ -136,6 +141,7 @@ AmplitudesVector copyAmplitudes(AmplitudesVector amps){
 			amps2(i,j) = amps(i,j);
 		}
 	}
+	*/
 	return amps2;
 }
 
@@ -234,13 +240,18 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 		//std::cout << "State = " << state << "    Amplitud = " << this->amplitudes[stateIndex] << std::endl;
 		//std::cout  << std::endl << std::endl;
 
+		//std::cout << "Old amplitude: " << oldAmplitudes[stateIndex] << " " << oldAmplitudes[stateIndex + 1] << std::endl;
+		std::cout << "Gate: " <<  gate[r][r].real << " " << gate[r][r].imag << " r = " << r << std::endl;
 		auxAmp1.real = 1.0 - gate[r][r].real;
-		auxAmp1.imag = 1.0 - gate[r][r].imag;
-		auxAmp2.real = oldAmplitudes(stateIndex, 0);
-		auxAmp2.imag = oldAmplitudes(stateIndex, 1);
+		auxAmp1.imag =  gate[r][r].imag;
+		auxAmp2.real = oldAmplitudes[stateIndex];
+		auxAmp2.imag = oldAmplitudes[stateIndex + 1];
 		auxAmp3 = amplitudeMult(auxAmp1, auxAmp2);
-		this->amplitudes(stateIndex, 0) = this->amplitudes(stateIndex, 0) - auxAmp3.real;
-		this->amplitudes(stateIndex, 1) = this->amplitudes(stateIndex, 0) - auxAmp3.imag;
+		std::cout << "amplitude1: " <<  auxAmp1.real << " " << auxAmp1.imag << std::endl;
+		//std::cout << "amplitude2: " <<  auxAmp2.real << " " << auxAmp2.imag << std::endl;
+		//std::cout << "amplitude3: " <<  auxAmp3.real << " " << auxAmp3.imag << std::endl;
+		this->amplitudes[stateIndex] = this->amplitudes[stateIndex] - auxAmp3.real;
+		this->amplitudes[stateIndex+1] = this->amplitudes[stateIndex+1] - auxAmp3.imag;
 
 	
 		/*
@@ -275,22 +286,20 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 				pos = this->numQubits - qubits.size() - qubits[0];
 				saux = copyBits(saux, k, pos, qubits.size());
 				////std::cout << "saux = " << saux << std::endl;
-				c.real = gate[j][r].real * oldAmplitudes(stateIndex, 0);
-				c.imag = gate[j][r].imag * oldAmplitudes(stateIndex, 1);
+				c.real = gate[j][r].real * oldAmplitudes[stateIndex];
+				c.imag = gate[j][r].imag * oldAmplitudes[stateIndex+1];
 				newStateIndex = findState(saux);
 				//std::cout << "saux = " << saux << " newStateIndex = " << newStateIndex << std::endl;
 				if(newStateIndex != -1){
-					this->amplitudes(newStateIndex, 0) += c.real;
-					this->amplitudes(newStateIndex, 1) += c.imag;
+					this->amplitudes[newStateIndex] += c.real;
+					this->amplitudes[newStateIndex+1] += c.imag;
 				}
 				else{
 					////std::cout << "saux = " << saux << " newStateIndex = " << newStateIndex << std::endl;
+					//std::cout << "c: " <<  c.real << " " << c.imag << std::endl;
 					this->states.push_back(saux);
-					std::cout << "size = " << this->amplitudes.size() << std::endl;
-					this->amplitudes.resize(this->amplitudes.size() + 1, 2);
-					std::cout << "size = " << this->amplitudes.size() << std::endl;
-					this->amplitudes(this->amplitudes.size()/2, 0) = c.real;
-					this->amplitudes(this->amplitudes.size()/2, 1) = c.imag;
+					this->amplitudes.push_back(c.real);
+					this->amplitudes.push_back(c.imag);
 				}
 			}
 			j++;
