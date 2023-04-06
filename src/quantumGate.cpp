@@ -1,6 +1,9 @@
 #include "quantumGate.h"
 
-// Constructor
+// Constructors
+QuantumGate::QuantumGate(){
+	this->dimension = 0;
+}
 QuantumGate::QuantumGate(unsigned int dimension){
 	this->dimension = dimension;
 	unsigned int i, j;
@@ -103,5 +106,20 @@ QuantumGate QuantumGate::Hadamard(){
 	g[1][0].imag = 0.0;
 	g[1][1].real = -1/sqrt(2); 
 	g[1][1].imag = 0.0;
+	return g;
+}
+
+
+QuantumGate QuantumGate::ControlledPhaseShift(double theta){
+	QuantumGate g(4);
+	Amplitude amp, ampResult;
+	amp.real = 0;
+	amp.imag = theta;
+	ampResult = eRaisedToComplex(amp);
+	g[0][0].real = 1.0;
+	g[1][1].real = 1.0;
+	g[2][2].real = 1.0;
+	g[3][3].real = ampResult.real;
+	g[3][3].imag = ampResult.imag;
 	return g;
 }

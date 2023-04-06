@@ -12,5 +12,6 @@ Amplitude amplitudeMult(Amplitude a, Amplitude b);
 unsigned int charToInteger(char c);
 unsigned int binaryToDecimal(std::string str);
 unsigned int copyBits(int destination, int source, int at, int numbits);
+Amplitude eRaisedToComplex(Amplitude amp);
 
 #endif

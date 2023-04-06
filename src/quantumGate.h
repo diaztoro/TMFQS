@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
+#include <cmath>
 #include "types.h"
 #include "utils.h"
 
@@ -16,6 +17,7 @@ class QuantumGate {
 
 	public:
 		unsigned int dimension;
+		QuantumGate();
 		QuantumGate(unsigned int dimension);
 		Amplitude * operator[](unsigned int i);
 		QuantumGate operator*(Amplitude x);

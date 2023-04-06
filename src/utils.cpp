@@ -63,3 +63,14 @@ unsigned int copyBits(int destination, int source, int at, int numbits){
    int mask = ((~0u)>>(sizeof(int)*8-numbits))<<at; // 2nd aproach
    return (destination&~mask)|((source<<at)&mask);
 }
+
+// e Raised to a complex number
+Amplitude eRaisedToComplex(Amplitude amp){
+	// e^(b+ic) = (e^b)(e^(ic))
+	// e^(ic) = (cos c) + i(sin c)
+	// e^(b+ic) = (e^b)((cos c) + i(sin c))
+	Amplitude result;
+	result.real = pow(e, amp.real) * cos(amp.imag);
+	result.imag = pow(e, amp.real) * sin(amp.imag);
+	return result;
+}
