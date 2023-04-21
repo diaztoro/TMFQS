@@ -23,10 +23,10 @@ int main(int argc, char *argv[]){
 		index = atoi(argv[2]);
 		Amplitude amp1;
 		QuantumGate g1, g2, h1(2), h2(2), cps1, cps2;
+		/*
 		g2 = g1.Identity(numberOfQubits);
 		g2.printQuantumGate();
 		cout << endl << endl;
-		/*
 		h2 = h1.Hadamard();
 		h2.printQuantumGate();
 		*/

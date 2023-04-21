@@ -64,6 +64,7 @@ class QuantumRegister {
 		//Quantum Gates operations
 		void applyGate(QuantumGate g, IntegerVector v);
 		void Hadamard(unsigned int qubit);
+		void ControlledPhaseShift(unsigned int controlQubit, unsigned int targetQubit, double theta);
 };
 
 #endif

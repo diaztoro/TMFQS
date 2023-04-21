@@ -10,6 +10,7 @@
 
 using namespace std;
 
+//TMFQS
 int main(int argc, char *argv[]){
 
 	if(argc != 3){
@@ -23,9 +24,11 @@ int main(int argc, char *argv[]){
 		qubit = atoi(argv[2]);
 
 		QuantumRegister qreg(numberOfQubits);
+		for(int i=0; i<numberOfQubits; i++)
+			qreg.Hadamard(i);
 		qreg.printStatesVector();
-		qreg.Hadamard(qubit);
-		qreg.printStatesVector();
+		//qreg.Hadamard(qubit);
+		//qreg.printStatesVector();
 
 
 		return 0;

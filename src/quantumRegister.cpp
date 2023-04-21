@@ -213,19 +213,19 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 	*/
 
 
-	std::cout  << "####### Applying  Gate on qubit: " << qubits[0] << " qubits size = " << qubits.size() << std::endl;
+	//std::cout  << "####### Applying  Gate on qubit: " << qubits[0] << " qubits size = " << qubits.size() << std::endl;
 	//for (state_map::iterator i = old.begin(); i != old.end(); ++i) {
 	for( i = 0; i < oldStates.size(); i++ ){
 		//state = i->first; 
 		state = oldStates[i];
-		////std::cout << "State = " << state << std::endl;
+		std::cout << "State = " << state << std::endl;
 		stateIndex = findState(state);
 		s = "";
 
 		//for (unsigned int q : qubits) s += state[q];
 		for (unsigned int qubit : qubits){
 			s += getNthBit(state, qubit);
-			//std::cout << "qubit = " << qubit << "   s = " << s << "   state = " << state << " ################" << std::endl;
+			////std::cout << "qubit = " << qubit << "   s = " << s << " ################" << std::endl;
 		}
 		//r = binary_to_base10(s); // Find which number basis element s corresponds to.
 		r = binaryToDecimal(s);
@@ -241,13 +241,15 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 		//std::cout  << std::endl << std::endl;
 
 		//std::cout << "Old amplitude: " << oldAmplitudes[stateIndex] << " " << oldAmplitudes[stateIndex + 1] << std::endl;
-		std::cout << "Gate: " <<  gate[r][r].real << " " << gate[r][r].imag << " r = " << r << std::endl;
+		//std::cout << "Gate: " <<  gate[r][r].real << " " << gate[r][r].imag << " r = " << r << std::endl;
 		auxAmp1.real = 1.0 - gate[r][r].real;
 		auxAmp1.imag =  gate[r][r].imag;
 		auxAmp2.real = oldAmplitudes[stateIndex];
 		auxAmp2.imag = oldAmplitudes[stateIndex + 1];
+		auxAmp3.real = 0.0;
+		auxAmp3.imag = 0.0;
 		auxAmp3 = amplitudeMult(auxAmp1, auxAmp2);
-		std::cout << "amplitude1: " <<  auxAmp1.real << " " << auxAmp1.imag << std::endl;
+		//std::cout << "amplitude1: " <<  auxAmp1.real << " " << auxAmp1.imag << std::endl;
 		//std::cout << "amplitude2: " <<  auxAmp2.real << " " << auxAmp2.imag << std::endl;
 		//std::cout << "amplitude3: " <<  auxAmp3.real << " " << auxAmp3.imag << std::endl;
 		this->amplitudes[stateIndex] = this->amplitudes[stateIndex] - auxAmp3.real;
@@ -314,4 +316,13 @@ void QuantumRegister::Hadamard(unsigned int qubit){
 	IntegerVector v;
 	v.push_back(qubit);
 	applyGate(QuantumGate::Hadamard(), v);
+}
+
+
+// Method to apply a ControlledPhaseShift gate to specific qubit of a quantum register
+void QuantumRegister::ControlledPhaseShift(unsigned int controlQubit, unsigned int targetQubit, double theta){
+	IntegerVector v;
+	v.push_back(controlQubit);
+	v.push_back(targetQubit);
+	applyGate(QuantumGate::ControlledPhaseShift(theta), v);
 }
