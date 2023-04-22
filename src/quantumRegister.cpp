@@ -192,8 +192,9 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 	AmplitudesVector oldAmplitudes;
 	Amplitude c, auxAmp1, auxAmp2, auxAmp3;
 	
-	oldAmplitudes = copyAmplitudes(this->amplitudes);
-	oldStates = states;
+	//oldAmplitudes = copyAmplitudes(this->amplitudes);
+	oldAmplitudes = this->amplitudes;
+	oldStates = this->states;
 	////std::cout << "qubits.size = " << qubits.size() << std::endl;
 	tempStates = getAllStates(qubits.size());
 
@@ -213,7 +214,7 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 	*/
 
 
-	//std::cout  << "####### Applying  Gate on qubit: " << qubits[0] << " qubits size = " << qubits.size() << std::endl;
+	std::cout  << "####### Applying  Gate on qubit: " << qubits[0] << " qubits size = " << qubits.size() << std::endl;
 	//for (state_map::iterator i = old.begin(); i != old.end(); ++i) {
 	for( i = 0; i < oldStates.size(); i++ ){
 		//state = i->first; 
@@ -244,16 +245,18 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 		//std::cout << "Gate: " <<  gate[r][r].real << " " << gate[r][r].imag << " r = " << r << std::endl;
 		auxAmp1.real = 1.0 - gate[r][r].real;
 		auxAmp1.imag =  gate[r][r].imag;
-		auxAmp2.real = oldAmplitudes[stateIndex];
-		auxAmp2.imag = oldAmplitudes[stateIndex + 1];
+		auxAmp2.real = oldAmplitudes[stateIndex*2];
+		auxAmp2.imag = oldAmplitudes[stateIndex*2 + 1];
 		auxAmp3.real = 0.0;
 		auxAmp3.imag = 0.0;
 		auxAmp3 = amplitudeMult(auxAmp1, auxAmp2);
 		//std::cout << "amplitude1: " <<  auxAmp1.real << " " << auxAmp1.imag << std::endl;
 		//std::cout << "amplitude2: " <<  auxAmp2.real << " " << auxAmp2.imag << std::endl;
 		//std::cout << "amplitude3: " <<  auxAmp3.real << " " << auxAmp3.imag << std::endl;
-		this->amplitudes[stateIndex] = this->amplitudes[stateIndex] - auxAmp3.real;
-		this->amplitudes[stateIndex+1] = this->amplitudes[stateIndex+1] - auxAmp3.imag;
+		this->amplitudes[stateIndex*2] = this->amplitudes[stateIndex*2] - auxAmp3.real;
+		this->amplitudes[stateIndex*2+1] = this->amplitudes[stateIndex*2+1] - auxAmp3.imag;
+		////std::cout << "amplitudes[" << state << "] = " << this->amplitudes[stateIndex*2] << " " << this->amplitudes[stateIndex*2+1] << std::endl;
+		////std::cout << *this << std::endl;
 
 	
 		/*
@@ -288,17 +291,19 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 				pos = this->numQubits - qubits.size() - qubits[0];
 				saux = copyBits(saux, k, pos, qubits.size());
 				////std::cout << "saux = " << saux << std::endl;
-				c.real = gate[j][r].real * oldAmplitudes[stateIndex];
-				c.imag = gate[j][r].imag * oldAmplitudes[stateIndex+1];
+				c.real = gate[j][r].real * oldAmplitudes[stateIndex*2];
+				c.imag = gate[j][r].imag * oldAmplitudes[stateIndex*2+1];
+				////std::cout << "c: " <<  c.real << " " << c.imag << std::endl;
 				newStateIndex = findState(saux);
+				////std::cout << "oldAmplitudes = " << oldAmplitudes[stateIndex] << " " << oldAmplitudes[stateIndex+1] << std::endl;
+				////std::cout << "Gate[j][r] = " << gate[j][r].real << " " << gate[j][r].imag << std::endl;
 				//std::cout << "saux = " << saux << " newStateIndex = " << newStateIndex << std::endl;
 				if(newStateIndex != -1){
-					this->amplitudes[newStateIndex] += c.real;
-					this->amplitudes[newStateIndex+1] += c.imag;
+					this->amplitudes[newStateIndex*2] += c.real;
+					this->amplitudes[newStateIndex*2+1] += c.imag;
 				}
 				else{
 					////std::cout << "saux = " << saux << " newStateIndex = " << newStateIndex << std::endl;
-					//std::cout << "c: " <<  c.real << " " << c.imag << std::endl;
 					this->states.push_back(saux);
 					this->amplitudes.push_back(c.real);
 					this->amplitudes.push_back(c.imag);
