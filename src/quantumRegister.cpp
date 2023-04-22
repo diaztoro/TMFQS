@@ -9,14 +9,14 @@ QuantumRegister::QuantumRegister() {
 
 QuantumRegister::QuantumRegister(unsigned int n) {
 	this->numQubits = n;
-	this->amplitudes.resize(1, 2);
-	this->amplitudes(0,0) = 1.0;
-	this->amplitudes(0,1) = 0.0;
 	this->states.push_back(0);
+	this->amplitudes.push_back(1.0);
+	this->amplitudes.push_back(0.0);
 }
 
 //Constructor by copy
 QuantumRegister::QuantumRegister(const QuantumRegister& qreg) {
+	/*
 	int i, j;
 	numQubits = qreg.numQubits;
 	amplitudes.resize(pow(2,this->numQubits), 2);
@@ -25,6 +25,8 @@ QuantumRegister::QuantumRegister(const QuantumRegister& qreg) {
 			amplitudes(i,j) = qreg.amplitudes(i,j);
 		}
 	}
+	*/
+	this->amplitudes = qreg.amplitudes;
 }
 
 int QuantumRegister::getSize(){
@@ -33,11 +35,11 @@ int QuantumRegister::getSize(){
 
 //Get methods ####################################
 //
-//Get the element i-th
+//Get the element i-th of linearized amplitudes vector
 Amplitude QuantumRegister::getElement(unsigned int element){
 	Amplitude amp;
-	amp.real = this->amplitudes(element,0);
-	amp.imag = this->amplitudes(element,1);
+	amp.real = this->amplitudes[element*2];
+	amp.imag = this->amplitudes[element*2 + 1];
 	return amp;
 }
 
@@ -48,8 +50,8 @@ Amplitude QuantumRegister::amplitude(unsigned int state){
 	StatesVector::iterator i = find(this->states.begin(), this->states.end(), state);
 	if (i != this->states.end()) {
 		index = i - this->states.begin();
-		amp.real = this->amplitudes(index,0);
-		amp.imag = this->amplitudes(index,1);
+		amp.real = this->amplitudes[index];
+		amp.imag = this->amplitudes[index + 1];
 	}
 	else {
 		amp.real = -1.0;
@@ -69,7 +71,7 @@ double QuantumRegister::probability(unsigned int state){
 double QuantumRegister::magnitudSumatory(){
 	int i, sum=0;
 	for(i=0; i<this->numQubits; i++){
-		sum += pow(this->amplitudes(i,0),2) + pow(this->amplitudes(i,1),2);
+		sum += pow(this->amplitudes[i*2], 2) + pow(this->amplitudes[i*2 + 1], 2);
 	}
 	return sum;
 }
@@ -78,7 +80,7 @@ double QuantumRegister::magnitudSumatory(){
 //Set methods ####################################
 void QuantumRegister::setSize(unsigned int numQubits){
 	this->numQubits = numQubits;
-	this->amplitudes.resize(this->numQubits, 2);
+	this->amplitudes.resize(this->numQubits*2);
 	this->states.resize(this->numQubits);
 }
 
@@ -87,28 +89,29 @@ void QuantumRegister::setSize(unsigned int numQubits){
 void QuantumRegister::fillStatesVector(){
 	int i, j;
 	if ( this->states.size() < this->numQubits ){
-		this->amplitudes.resize(this->numQubits, 2);
+		this->amplitudes.resize(this->numQubits*2);
 	}
-	for (i=0; i < this->numQubits; i++){
+	for (i=1; i < this->numQubits; i++){
 		this->states.push_back(i);
-		for (j=0; j < 2; j++){
-			this->amplitudes(i,j) = getRandomNumber();
-		}
+		this->amplitudes.push_back(i);
+		this->amplitudes.push_back(i);
 	}
 }
 
 //Miscelaneous methods ###########################
 //Print states vector
 std::ostream &operator << (std::ostream &os, QuantumRegister &reg) {
-	int i, j;
-	cout << reg.states.size() << endl;
-	for(auto i : reg.states){
-		cout << reg.states[i] << ": ";
-		for(j=0; j < 2; j++){
-			cout << reg.amplitudes(i,j) << " ";
-		}
-		cout << endl;
+	int i = 0, j;
+	for(auto &element : reg.states){
+		cout << element << ": ";
+		cout << reg.amplitudes[i*2] << " " << reg.amplitudes[i*2 + 1] << endl;
+		i++;
 	}
+	/*
+	for(auto &amp : reg.amplitudes){
+		cout << amp << endl;
+	}
+	*/
 	return os;
 }
 
@@ -128,6 +131,8 @@ QuantumRegister::~QuantumRegister(){
 // Method to copy amplitudes vector
 AmplitudesVector copyAmplitudes(AmplitudesVector amps){
 	AmplitudesVector amps2;
+	amps2 = amps;
+	/*
 	int i, j;
 
 	amps2.resize(amps.size(), 2);
@@ -136,6 +141,7 @@ AmplitudesVector copyAmplitudes(AmplitudesVector amps){
 			amps2(i,j) = amps(i,j);
 		}
 	}
+	*/
 	return amps2;
 }
 
@@ -144,11 +150,12 @@ StatesVector getAllStates(unsigned int qubits){
 	StatesVector v;
 	int i;
 
-	for(i=0; i < qubits; i++){
+	for(i=0; i <= qubits; i++){
 		v.push_back(i);
 	}
 	return v;
 }
+
 
 string QuantumRegister::getNthBit(unsigned int state, unsigned int qubit){
 	unsigned int pos, bit;
@@ -157,25 +164,41 @@ string QuantumRegister::getNthBit(unsigned int state, unsigned int qubit){
 	return to_string(bit);
 }
 
-// Method to apply a quantum gate to quantum register
-void QuantumRegister::applyGate(QuantumGate g, IntegerVector qubits){
+int QuantumRegister::findState(unsigned int state){
+	int index;
+	auto it = std::find(this->states.begin(), this->states.end(), state); 
+	if (it != this->states.end()) {
+		index = it - this->states.begin();
+	}
+	else {
+		index = -1;
+	}
+	return index;
+}
 
-	if (g.dimension != (unsigned int)(1 << qubits.size())) { // 1 << qubits.size is pow(2, qubits.size())
+// Method to apply a quantum gate to quantum register
+void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
+
+	if (gate.dimension != (unsigned int)(1 << qubits.size())) { // 1 << qubits.size is pow(2, qubits.size())
 		printf("Unitary matrix dimension is not correct to be applied to the inputs qubits\n");
 		return; 
 	}
 
-	unsigned int state, i; 
+	unsigned int state, i, pos;
+	int stateIndex, newStateIndex;
 	string s;
-	unsigned int r, j; 
+	unsigned int r, j, saux; 
 	StatesVector oldStates, tempStates;
 	AmplitudesVector oldAmplitudes;
-	Amplitude c;
+	Amplitude c, auxAmp1, auxAmp2, auxAmp3;
 	
-	oldAmplitudes = copyAmplitudes(amplitudes);
-	oldStates = states;
+	//oldAmplitudes = copyAmplitudes(this->amplitudes);
+	oldAmplitudes = this->amplitudes;
+	oldStates = this->states;
+	////std::cout << "qubits.size = " << qubits.size() << std::endl;
 	tempStates = getAllStates(qubits.size());
 
+	/*
 	cout << "States vector" << endl;
 	for (unsigned int i : states){
 		cout << states[i] << endl;
@@ -188,30 +211,61 @@ void QuantumRegister::applyGate(QuantumGate g, IntegerVector qubits){
 	for (unsigned int i : tempStates){
 		cout << tempStates[i] << endl;
 	}
+	*/
 
 
+	std::cout  << "####### Applying  Gate on qubit: " << qubits[0] << " qubits size = " << qubits.size() << std::endl;
 	//for (state_map::iterator i = old.begin(); i != old.end(); ++i) {
 	for( i = 0; i < oldStates.size(); i++ ){
 		//state = i->first; 
 		state = oldStates[i];
+		std::cout << "State = " << state << std::endl;
+		stateIndex = findState(state);
 		s = "";
-		cout << "QuantumRegister::applyGate 6" << endl;
 
 		//for (unsigned int q : qubits) s += state[q];
 		for (unsigned int qubit : qubits){
 			s += getNthBit(state, qubit);
+			////std::cout << "qubit = " << qubit << "   s = " << s << " ################" << std::endl;
 		}
-		cout << "QuantumRegister::applyGate 7" << endl;
 		//r = binary_to_base10(s); // Find which number basis element s corresponds to.
 		r = binaryToDecimal(s);
-		cout << "QuantumRegister::applyGate 8" << endl;
+
+		////std::cout << " s =  " <<  s << " r = " << r << " #############" << std::endl;
+
 
 
 	/*
 		states[state] -= (1.0 - u[r][r]) * old[state];
+	*/
+		//std::cout << "State = " << state << "    Amplitud = " << this->amplitudes[stateIndex] << std::endl;
+		//std::cout  << std::endl << std::endl;
+
+		//std::cout << "Old amplitude: " << oldAmplitudes[stateIndex] << " " << oldAmplitudes[stateIndex + 1] << std::endl;
+		//std::cout << "Gate: " <<  gate[r][r].real << " " << gate[r][r].imag << " r = " << r << std::endl;
+		auxAmp1.real = 1.0 - gate[r][r].real;
+		auxAmp1.imag =  gate[r][r].imag;
+		auxAmp2.real = oldAmplitudes[stateIndex*2];
+		auxAmp2.imag = oldAmplitudes[stateIndex*2 + 1];
+		auxAmp3.real = 0.0;
+		auxAmp3.imag = 0.0;
+		auxAmp3 = amplitudeMult(auxAmp1, auxAmp2);
+		//std::cout << "amplitude1: " <<  auxAmp1.real << " " << auxAmp1.imag << std::endl;
+		//std::cout << "amplitude2: " <<  auxAmp2.real << " " << auxAmp2.imag << std::endl;
+		//std::cout << "amplitude3: " <<  auxAmp3.real << " " << auxAmp3.imag << std::endl;
+		this->amplitudes[stateIndex*2] = this->amplitudes[stateIndex*2] - auxAmp3.real;
+		this->amplitudes[stateIndex*2+1] = this->amplitudes[stateIndex*2+1] - auxAmp3.imag;
+		////std::cout << "amplitudes[" << state << "] = " << this->amplitudes[stateIndex*2] << " " << this->amplitudes[stateIndex*2+1] << std::endl;
+		////std::cout << *this << std::endl;
+
+	
+		/*
+		// NOT YET CONSIDERED 
 		// if (states[state] == 0.0) states.erase(state); // Get rid of it.
 		if (probability(state) < 1e-16) states.erase(state); // zero beyond machine precision.
+		*/
 
+		/*
 		j = 0;
 		for(string k : temp_states) {
 			if (j != r) {
@@ -226,7 +280,37 @@ void QuantumRegister::applyGate(QuantumGate g, IntegerVector qubits){
 			}
 			j++;
 		}
-	*/
+		*/
+		j = 0;
+		for(int k : tempStates){
+			////std::cout << "j = " << j << " k = " << k << std::endl;
+			if (j != r) {
+				saux = state;
+				// COPY ALL BITS FROM k TO saux AT POSITION pos WHICH CORRESPOND TO THE QUBIT WHERE TO APPLY THE GATE
+				// qubits.size() IS THE NUMBER OF BITS OF k (BITS TO COPY)
+				pos = this->numQubits - qubits.size() - qubits[0];
+				saux = copyBits(saux, k, pos, qubits.size());
+				////std::cout << "saux = " << saux << std::endl;
+				c.real = gate[j][r].real * oldAmplitudes[stateIndex*2];
+				c.imag = gate[j][r].imag * oldAmplitudes[stateIndex*2+1];
+				////std::cout << "c: " <<  c.real << " " << c.imag << std::endl;
+				newStateIndex = findState(saux);
+				////std::cout << "oldAmplitudes = " << oldAmplitudes[stateIndex] << " " << oldAmplitudes[stateIndex+1] << std::endl;
+				////std::cout << "Gate[j][r] = " << gate[j][r].real << " " << gate[j][r].imag << std::endl;
+				//std::cout << "saux = " << saux << " newStateIndex = " << newStateIndex << std::endl;
+				if(newStateIndex != -1){
+					this->amplitudes[newStateIndex*2] += c.real;
+					this->amplitudes[newStateIndex*2+1] += c.imag;
+				}
+				else{
+					////std::cout << "saux = " << saux << " newStateIndex = " << newStateIndex << std::endl;
+					this->states.push_back(saux);
+					this->amplitudes.push_back(c.real);
+					this->amplitudes.push_back(c.imag);
+				}
+			}
+			j++;
+		}
 	}
 }
 
@@ -236,6 +320,14 @@ void QuantumRegister::applyGate(QuantumGate g, IntegerVector qubits){
 void QuantumRegister::Hadamard(unsigned int qubit){
 	IntegerVector v;
 	v.push_back(qubit);
-	cout << "QuantumRegister::Hadamard" << endl;
 	applyGate(QuantumGate::Hadamard(), v);
+}
+
+
+// Method to apply a ControlledPhaseShift gate to specific qubit of a quantum register
+void QuantumRegister::ControlledPhaseShift(unsigned int controlQubit, unsigned int targetQubit, double theta){
+	IntegerVector v;
+	v.push_back(controlQubit);
+	v.push_back(targetQubit);
+	applyGate(QuantumGate::ControlledPhaseShift(theta), v);
 }

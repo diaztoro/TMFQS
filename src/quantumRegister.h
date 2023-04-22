@@ -55,6 +55,7 @@ class QuantumRegister {
 		void printStatesVector();
 		friend std::ostream &operator << (std::ostream &os, QuantumRegister &reg);
 		string getNthBit(unsigned int state, unsigned int qubit);
+		int findState(unsigned int state);
 
 		//Destructor #####################################
 		~QuantumRegister();
@@ -63,6 +64,7 @@ class QuantumRegister {
 		//Quantum Gates operations
 		void applyGate(QuantumGate g, IntegerVector v);
 		void Hadamard(unsigned int qubit);
+		void ControlledPhaseShift(unsigned int controlQubit, unsigned int targetQubit, double theta);
 };
 
 #endif

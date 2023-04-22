@@ -10,21 +10,26 @@
 
 using namespace std;
 
+//TMFQS
 int main(int argc, char *argv[]){
 
 	if(argc != 3){
-		cout << "testSim <Number of Qubits> <index>" << endl;
+		cout << "./applyHadamard <Number of Qubits> <qubit>" << endl;
 		return 1;
 	}
    else{
 		int i, j;
-		unsigned int numberOfQubits, index;
+		unsigned int numberOfQubits, qubit;
 		numberOfQubits = atoi(argv[1]);
-		index = atoi(argv[2]);
+		qubit = atoi(argv[2]);
 
 		QuantumRegister qreg(numberOfQubits);
+		for(int i=0; i<numberOfQubits; i++){
+			qreg.Hadamard(i);
+		}
 		qreg.printStatesVector();
-		qreg.Hadamard(index);
+		//qreg.Hadamard(qubit);
+		//qreg.printStatesVector();
 
 
 		return 0;
