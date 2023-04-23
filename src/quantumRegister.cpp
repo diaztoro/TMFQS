@@ -214,12 +214,12 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 	*/
 
 
-	std::cout  << "####### Applying  Gate on qubit: " << qubits[0] << " qubits size = " << qubits.size() << std::endl;
+	////std::cout  << "####### Applying  Gate on qubit: " << qubits[0] << " qubits size = " << qubits.size() << std::endl;
 	//for (state_map::iterator i = old.begin(); i != old.end(); ++i) {
 	for( i = 0; i < oldStates.size(); i++ ){
 		//state = i->first; 
 		state = oldStates[i];
-		std::cout << "State = " << state << std::endl;
+		////std::cout << "State = " << state << std::endl;
 		stateIndex = findState(state);
 		s = "";
 
@@ -241,10 +241,10 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 		//std::cout << "State = " << state << "    Amplitud = " << this->amplitudes[stateIndex] << std::endl;
 		//std::cout  << std::endl << std::endl;
 
-		//std::cout << "Old amplitude: " << oldAmplitudes[stateIndex] << " " << oldAmplitudes[stateIndex + 1] << std::endl;
-		//std::cout << "Gate: " <<  gate[r][r].real << " " << gate[r][r].imag << " r = " << r << std::endl;
+		////std::cout << "Old State: " << oldAmplitudes[stateIndex*2] << " " << oldAmplitudes[stateIndex*2 + 1] << std::endl;
+		////std::cout << "Gate: " <<  gate[r][r].real << " " << gate[r][r].imag << " r = " << r << std::endl;
 		auxAmp1.real = 1.0 - gate[r][r].real;
-		auxAmp1.imag =  gate[r][r].imag;
+		auxAmp1.imag =  0.0 - gate[r][r].imag;
 		auxAmp2.real = oldAmplitudes[stateIndex*2];
 		auxAmp2.imag = oldAmplitudes[stateIndex*2 + 1];
 		auxAmp3.real = 0.0;
