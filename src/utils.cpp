@@ -2,10 +2,10 @@
 #include "utils.h"
 
 // the seed for the random number engine is obtained using this
-std::random_device ramdomDev;  
+std::random_device ramdomDevice;  
 
 // Mersenne_twister_engine using randomDev as seed
-std::mt19937 randomNumberEngine(ramdomDev()); 
+std::mt19937 randomNumberEngine(ramdomDevice()); 
 
 // Uniform real distribuition
 std::uniform_real_distribution<> uniformRealDistribution(0.0, 1.0);
@@ -17,10 +17,8 @@ double getRandomNumber() {
 // Complex number multiplication
 Amplitude amplitudeMult(Amplitude a, Amplitude b){
 	Amplitude result;
-	//std::cout << "a = " << a.real << " " << a.imag << " b = " << b.real << " " << b.imag << std::endl;
 	result.real = a.real * b.real - a.imag * b.imag;
 	result.imag = a.real * b.imag + a.imag * b.real;
-	//std::cout << "result = " << result.real << " " << result.imag << std::endl;
 	return result;
 }
 
@@ -57,7 +55,12 @@ unsigned int binaryToDecimal(std::string str) {
    return result;
 }
 
-// Copy bits from source to destination
+// Copy "numbits" bits from "source" to "destination" to the position "at"
+// Example: destination = 8 (1000)
+// 			source = 3 (11)
+// 			at = 0
+// 			numbits = 2
+// 			result = 11 (1011)
 unsigned int copyBits(int destination, int source, int at, int numbits){
    // int mask = ((1LL<<numbits)-1)<<at; // 1st aproach
    int mask = ((~0u)>>(sizeof(int)*8-numbits))<<at; // 2nd aproach
@@ -73,4 +76,9 @@ Amplitude eRaisedToComplex(Amplitude amp){
 	result.real = pow(e, amp.real) * cos(amp.imag);
 	result.imag = pow(e, amp.real) * sin(amp.imag);
 	return result;
+}
+
+
+double absoluteValue(Amplitude amp){
+	return sqrt(pow(amp.real, 2) + pow(amp.imag, 2));
 }

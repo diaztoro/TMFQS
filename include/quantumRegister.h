@@ -1,5 +1,5 @@
-#ifndef QUANTUM_INCLUDE
-#define QUANTUM_INCLUDE
+#ifndef QUANTUM_REGISTER_INCLUDE
+#define QUANTUM_REGISTER_INCLUDE
 
 #include <iostream>
 #include <cstdio>
@@ -20,7 +20,7 @@ class QuantumRegister {
 
 		//Constructors ###################################
 		QuantumRegister();
-		QuantumRegister(unsigned int n);
+		QuantumRegister(unsigned int numQubits);
 		QuantumRegister(const QuantumRegister&);
 
 		int getSize();
@@ -35,7 +35,7 @@ class QuantumRegister {
 		double probability(unsigned int state);
 
 		//Get the sum of magnitudes of the statesVector
-		double magnitudSumatory();
+		double probabilitySumatory();
 
 
 		//Get the amplitude of specific state
@@ -56,6 +56,7 @@ class QuantumRegister {
 		friend std::ostream &operator << (std::ostream &os, QuantumRegister &reg);
 		string getNthBit(unsigned int state, unsigned int qubit);
 		int findState(unsigned int state);
+		double getProbability(unsigned int state);
 
 		//Destructor #####################################
 		~QuantumRegister();
@@ -65,6 +66,8 @@ class QuantumRegister {
 		void applyGate(QuantumGate g, IntegerVector v);
 		void Hadamard(unsigned int qubit);
 		void ControlledPhaseShift(unsigned int controlQubit, unsigned int targetQubit, double theta);
+		void ControlledNot(unsigned int controlQubit, unsigned int targetQubit);
+		void Swap(unsigned int qubit1, unsigned int qubit2);
 };
 
-#endif
+#endif //QUANTUM_REGISTER_INCLUDE
