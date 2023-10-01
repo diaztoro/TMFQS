@@ -21,6 +21,8 @@ class QuantumRegister {
 		//Constructors ###################################
 		QuantumRegister();
 		QuantumRegister(unsigned int numQubits);
+		QuantumRegister(unsigned int numQubits, unsigned int initState);
+		QuantumRegister(unsigned int numQubits, unsigned int initState, Amplitude amp);
 		QuantumRegister(const QuantumRegister&);
 
 		int getSize();

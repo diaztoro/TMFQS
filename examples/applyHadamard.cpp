@@ -1,8 +1,5 @@
 #include "tmfqs.h"
 #include <stdlib.h>
-#include <mpi.h>
-#include <zfp.h>
-#include <zfp/array2.hpp>
 #include <iostream>
 
 
@@ -20,11 +17,19 @@ int main(int argc, char *argv[]){
 		unsigned int numberOfQubits, qubit;
 		numberOfQubits = atoi(argv[1]);
 		qubit = atoi(argv[2]);
+		Amplitude amp;
 
-		QuantumRegister qreg(numberOfQubits);
+		amp.real = 0.653281;
+		amp.imag = 0.270598;
+		QuantumRegister qreg(numberOfQubits, 9, amp);
+		qreg.printStatesVector();
+		std::cout << std::endl;
+		qreg.Hadamard(qubit);
+		/*
 		for(int i=0; i<numberOfQubits; i++){
 			qreg.Hadamard(i);
 		}
+		*/
 		qreg.printStatesVector();
 		//qreg.Hadamard(qubit);
 		//qreg.printStatesVector();

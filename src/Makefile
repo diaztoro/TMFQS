@@ -30,7 +30,7 @@ $(TARGET_LIB): $(subst .cpp,.o,$(SOURCES))
 .PHONY: install
 install:
 	mkdir -p $(INSTALLDIR)
-	cp -p $(TARGET_LIB) $(INSTALLDIR)
+	mv  $(TARGET_LIB) $(INSTALLDIR)
 
 .PHONY: clean 
 clean:
