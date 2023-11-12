@@ -75,8 +75,7 @@ Amplitude QuantumRegister::amplitude(unsigned int state){
 
 
 //Get the Magnitud or Modulus of the element i-th
-double QuantumRegister::probability(unsigned int state){
-	Amplitude amp = amplitude(state);
+double QuantumRegister::probability(Amplitude amp){
 	return sqrt(pow(amp.real, 2) + pow(amp.imag, 2));
 }
 
@@ -178,6 +177,13 @@ double QuantumRegister::getProbability(unsigned int state){
 	return absoluteValue(amp);
 }
 
+unsigned int QuantumRegister::getStatesVectorSize(){
+	return this->states.size();
+}
+
+unsigned int QuantumRegister::getAmplitudesVectorSize(){
+	return this->amplitudes.size();
+}
 
 
 // Method to apply a quantum gate to quantum register
@@ -194,7 +200,7 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 	unsigned int i, j, l, r;
 	StatesVector oldStates, tempStates;
 	AmplitudesVector oldAmplitudes;
-	Amplitude c, auxAmp1, auxAmp2, auxAmp3;
+	Amplitude c, auxAmp1, auxAmp2, auxAmp3, amp;
 	
 	// Copy the current states
 	oldAmplitudes = this->amplitudes;
@@ -224,10 +230,14 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 		this->amplitudes[stateIndex*2] = this->amplitudes[stateIndex*2] - auxAmp3.real;
 		this->amplitudes[stateIndex*2+1] = this->amplitudes[stateIndex*2+1] - auxAmp3.imag;
 	
-		/*
-		// NOT YET CONSIDERED 
-		if (probability(state) < 1e-16) states.erase(state); // zero beyond machine precision.
-		*/
+		//REMOVE LESS PROBABLE STATES WHICH VALUE IS BEYOND MACHINE PRECISION
+		amp.real = this->amplitudes[stateIndex*2];
+		amp.imag = this->amplitudes[stateIndex*2+1];
+		if (probability(amp) < 1e-16){
+			this->amplitudes.erase(amplitudes.begin() + stateIndex*2); 
+			this->amplitudes.erase(amplitudes.begin() + stateIndex*2); 
+			this->states.erase(states.begin() + stateIndex); 
+		}
 
 		j = 0;
 		for(int k : tempStates){
@@ -255,6 +265,14 @@ void QuantumRegister::applyGate(QuantumGate gate, IntegerVector qubits){
 				if(newStateIndex != -1){
 					this->amplitudes[newStateIndex*2] += c.real;
 					this->amplitudes[newStateIndex*2+1] += c.imag;
+					//REMOVE LESS PROBABLE STATES WHICH VALUE IS BEYOND MACHINE PRECISION
+					amp.real = this->amplitudes[newStateIndex*2];
+					amp.imag = this->amplitudes[newStateIndex*2+1];
+					if (probability(amp) < 1e-16){
+						this->amplitudes.erase(amplitudes.begin() + newStateIndex*2); 
+						this->amplitudes.erase(amplitudes.begin() + newStateIndex*2); 
+						this->states.erase(states.begin() + newStateIndex); 
+		}
 				}
 				else{
 					this->states.push_back(newState);
