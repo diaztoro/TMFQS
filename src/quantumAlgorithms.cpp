@@ -8,9 +8,9 @@ void quatumFourierTransform(QuantumRegister *qureg) {
 
    for(i = 0; i < qureg->numQubits; i++){
       qureg->Hadamard(i);
+		std::cout << "stateVecSize: " << qureg->getStatesVectorSize() << " amplitudesVecSize: " << qureg->getAmplitudesVectorSize() << std::endl;
       for (j = 1; j < qureg->numQubits - i; j++) {
          qureg->ControlledPhaseShift(i + j, i, pi/double(1 << j)); // 1 << j is pow(2, j)
-			//std::cout << "stateVecSize: " << qureg->getStatesVectorSize() << " amplitudesVecSize: " << qureg->getAmplitudesVectorSize() << std::endl;
       }
 		if( i == 0 ){
 			std::cout << "UNO" << std::endl;
