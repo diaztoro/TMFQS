@@ -12,11 +12,6 @@ void quatumFourierTransform(QuantumRegister *qureg) {
       for (j = 1; j < qureg->numQubits - i; j++) {
          qureg->ControlledPhaseShift(i + j, i, pi/double(1 << j)); // 1 << j is pow(2, j)
       }
-		if( i == 0 ){
-			std::cout << "UNO" << std::endl;
-			qureg->printStatesVector();
-			std::cout << "DOS" << std::endl;
-		}
    }
 	for (i = 0; i < floor((qureg->numQubits) / 2.0); i++){
 		//std::cout << i << " " << qureg->numQubits-i-1 << std::endl;
