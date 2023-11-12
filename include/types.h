@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <limits>
 
 typedef struct {
         double real, imag;

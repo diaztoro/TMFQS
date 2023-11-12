@@ -40,5 +40,5 @@ TMFQS.srctrlprj
 chatgpt
 
 
-# test simulator binaries
-bin
+# Vim files
+.*.swp

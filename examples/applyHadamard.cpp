@@ -32,8 +32,9 @@ int main(int argc, char *argv[]){
 		QuantumRegister qreg(numQubits, initState, amp);
 		for(int i=0; i<numQubits; i++){
 			qreg.Hadamard(i);
+			std::cout << qreg.getStatesVectorSize() << " " << qreg.getAmplitudesVectorSize() << std::endl;
 		}
-		qreg.printStatesVector();
+		//qreg.printStatesVector();
 		//qreg.ControlledPhaseShift(controlQubit, targetQubit, theta);
 		//qreg.printStatesVector();
 
